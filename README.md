@@ -1,8 +1,8 @@
-# Best Practices and Checklist for the Set-up and Simulation of Solid(ish)-Fluid Interfacial Systems
+# Best practices and checklist for the set-up and molecular dynamics simulation of solid-fluid interfacial systems
 
 Jacob Monroe, Andrew Summers, Kristen Fichthorn, Dave Smith, Alan Grossfield
 
-## A brief introduction to Interfacial Science
+## A brief introduction to interfacial science
 
 ### Brief overview of molecular interactions in the context of interfaces
 * Electrostatic interactions
