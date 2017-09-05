@@ -1,0 +1,304 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% LIVECOMS ARTICLE TEMPLATE
+%%% ADAPTED FROM ELIFE ARTICLE TEMPLATE (8/10/2017)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% PREAMBLE 
+\documentclass[9pt]{livecoms}
+% Use the 'onehalfspacing' option for 1.5 line spacing
+% Use the 'doublespacing' option for 2.0 line spacing
+% use the 'lineno' option for adding line numbers. 
+% Please note that these options may affect formatting.
+
+\usepackage{lipsum} % Required to insert dummy text
+\usepackage[version=4]{mhchem} 
+\usepackage{siunitx}
+\DeclareSIUnit\Molar{M}
+\newcommand{\versionnumber}{0.1}  % you should update the minor version number in preprints and major version number of submissions.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% ARTICLE SETUP
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{Best practices and checklist for the set-up and molecular dynamics simulation of solid-fluid interfacial systems : v\versionnumber}
+
+\author[1*\authfn{1}]{Jacob I. Monroe}
+\author[2\authfn{1}]{Kristen Fichthorn}
+\affil[1]{Department of Chemical Engineering, University of California, Santa Barbara}
+\affil[2]{Department of Chemical Engineering, Penn State University}
+
+\corr{jimonroe@umail.ucsb.edu}{JIM}
+
+\contrib[\authfn{1}]{These authors contributed equally to this work}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% ARTICLE START
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+In this contribution to the LiveCoMS journal, we recommend specific methods for setting up interfacial systems, as well as parameters and techniques that should be used when simulating solid-fluid interfaces.
+We believe the procedures detailed here to constituted the current "best practices" in the field, and encourage readers to make comments and suggestions at the GitHub repository in order to keep this document consistent with the state of the art.
+This document DOES NOT specifically cover fluid-fluid interfaces or lipid membranes, which are, or will be, addressed in other contributions to the journal.
+However, many of the concepts presented here will also be useful in working with such systems.
+The first part of this document provides a very brief introduction to interfacial science, and a (inexhaustive) list of other resources that the reader should carefully study before attempting to run any simulations.
+The checklists provided after should not be viewed as complete, but, if followed, should help the reader to avoid \textit{most} mistakes involved in performing interfacial simulations.
+Although this document recommends performing common analyses and computation of specific properties for simulation verification, these procedures WILL NOT be covered here.
+Supplements are provided for specific, relatively popular systems of interests.
+Though not every interfacial system may be covered in depth, we hope the selected systems serve as concrete examples that help the reader to better understand the considerations involved in simulating interfacial systems with molecular dynamics.
+\end{abstract}
+
+
+\section{A brief introduction to interfacial science}
+\label{sec:Intro}
+
+
+\subsection{Molecular interactions in the context of interfaces}
+\begin{itemize}
+	\item Electrostatic interactions
+	\begin{itemize}
+		\item Considerations at short range
+		\item Considerations at long range
+		\begin{itemize}
+			\item Distinct from short range if have something like a net dipole moment in the surface or a double-layer at the surface, or longer range surface-surface interactions
+		\end{itemize}
+	\end{itemize}
+	\item Dispersion interactions
+	\begin{itemize}
+		\item Considerations at short range
+		\item Considerations at long range 
+		\begin{itemize}
+			\item Again distinct from short-range, with potentials such as an effective 9-3, etc.
+		\end{itemize}
+	\end{itemize}
+	\item Adsorption at interfaces
+	\item Surface reactivity and covalent bonding
+\end{itemize}
+
+\subsection{Brief overview of thermodynamics of interfaces}
+\begin{itemize}
+	\item Introduction of thermodynamic ensembles involving surface area, surface tension, and interfacial free energy
+	\item Definition of an interface 
+	\item Interfacial tension and interfacial free energy - not the same for solid interfaces
+\end{itemize}
+
+\subsection{General resources}
+\begin{itemize}
+	\item “Molecular Theory of Capillarity,” Rowlinson and Widom \cite{RowlinsonWidom1982}
+	\item “Intermolecular and Surface Forces,” Israelachvili \cite{Israelachvili2011}
+\end{itemize}
+
+\subsection{Commonly used terminology and abbreviations}
+It was decided that every document should have such a section, which is likely a very good idea 
+
+\subsection{Background on specific interfaces of interest/case studies}
+\begin{itemize}
+	\item Self-assembled monolayers (SAMs)
+May be of general interest, not sure
+
+	\item Metallic Interfaces
+If there are any specific background 
+\end{itemize}
+
+
+\section{Checklist for interfacial simulations}
+\label{sec:checklist}
+
+
+\subsection{Force field/model selection}
+\label{subsec:mainFF}
+
+\begin{itemize}
+	\item No general best options; depends on specific system AND the information you want to get out of the simulations
+	\item For information on specific systems, see section the "Force field selection" section in supplements for:
+	\begin{itemize}
+		\item \hyperref[subsec:SAMFF]{Self-assembled monolayers (SAMs)}
+		\item \hyperref[subsec:MetFF]{Metallic interfaces}
+	\end{itemize}
+\end{itemize}
+
+
+\subsection{Preparing initial configurations}
+\label{subsec:mainPrep}
+
+\begin{itemize}
+	\item Equilibrate each phase separately
+	\begin{itemize}
+		\item Make sure you can replicate correct properties of each phase (and molecular species) on their own BEFORE trying to put the system together
+		\begin{itemize}		
+			\item Use reference experimental or simulation data to check this if available
+		\end{itemize}
+		\item This can also help reduce kinetic barriers and long equilibration times
+		\item EXCEPTION: lipid bilayers or other systems for which each phase is not stable on its own
+	\end{itemize}
+	\item Combine phases such that configuration is close to expected for desired thermodynamic state point to simulate at
+	\begin{itemize}
+		\item Likely want to combine each system leaving some gap at interface, which will prevent system from blowing up, however the gap should be sufficiently small to prevent bubble formation in liquid-solid systems
+		\item For complicated geometries of the solid, such as a large colloid, may want to place in an equilibrated box of solvent and eliminate any overlapping solvent molecules (see other documents, like bio-simulations, etc.)
+		\item Can also perform solvation in similar fashion as for biomolecules, but always check for solvent placed inside the solid surface
+		\item May want to make sure that each phase is large enough that it effectively screens the other phase from interacting with its periodic image (if the system is periodic tangential to the interface and walls are not being used)
+	\end{itemize}
+	\item For information on specific systems, see section the "Preparing initial configurations" section in supplements for:
+	\begin{itemize}
+		\item \hyperref[subsec:SAMPrep]{Self-assembled monolayers (SAMs)}
+		\item \hyperref[subsec:MetPrep]{Metallic interfaces}
+	\end{itemize}
+\end{itemize}
+
+
+\subsection{Equilibrating the system and selecting MD settings}
+\label{subsec:mainEq}
+
+\begin{itemize}
+	\item Timestep: for atomistic, 1 to 2 fs, but CG models can extend this considerably (check force field recommendations)
+	\item Bond constraints: check force field recommendations
+	\item For output frequency (energies and trajectory frames) and precision, see general simulation guidelines
+	\item Select periodicity of the system
+	\begin{itemize}
+		\item Generally for interfaces, at least have periodicity in the plane of the interface (x and y if z is perpendicular to the interface) to simulate a surface of infinite area
+		\item Full periodicity in all cartesian directions may be easiest to work with, but make sure that phases are large enough that they do not “see” themselves past the other phase (depends on choice of cut-off and spatial correlations in each phase)
+	\end{itemize}
+	\item Remove center of mass motion of each phase independently if possible
+	\begin{itemize}
+		\item May want to constrain or restrain solid surface position
+		\item Should be done at every time step, or at least at high enough frequency that there is no net relative motion between phases
+	\end{itemize}
+	\item Equilibrate the temperature at fixed volume first
+	\begin{itemize}
+		\item If possible, thermostat the phases separately
+		\begin{itemize}
+			\item Especially true if using Nose-Hoover for fluid-solid interfaces; if this is the case, make sure to increase the number of chains
+		\end{itemize}
+		\item For time constants, check force field recommendations and general simulation guidelines, but generally, a multiple of about 1000 timesteps is reasonable (weak thermostatting).
+	\end{itemize}
+	\item Equilibrate the density using NPT simulations
+	\begin{itemize}
+		\item Please see other documents to help select an appropriate thermostat and barostat (for just equilibration, Berendsen may actually be desirable)
+		\item Even if plan to eventually run in NVT or NVE, do this to remove voids (exception is liquid-vapor simulations) like the gaps left at the interface to make your life easier during equilibration
+		\item Make sure to use a semi-isotropic or anisotropic barostat
+		\begin{itemize}
+			\item Be careful to check new dimensions of a solid surface if allowed to relax during NPT
+			\begin{itemize}
+				\item May actually want to set compressibility to zero for dimensions in the plane of the surface if constant surface area is desired (technically NAPzT ensemble)
+			\end{itemize}
+			\item If restraining or constraining a solid surface, make sure barostat appropriately re-scales the restraints/constraints, and appropriately treats these terms when calculating the Virial
+		\end{itemize}
+		\item Time constants: check force field recommendations and general simulation guidelines, but generally, a multiple of about 1000 timesteps is reasonable (weak barostatting).
+	\end{itemize}
+	\item Long-range electrostatics and cutoffs
+	\begin{itemize}
+		\item Normally, you want to go with the protocols/settings associated with the choice of model/force field, but long range electrostatics (including schemes, precision, etc.) can in general have a large effect on structuring and dynamics. 
+		Longer-range electrostatics can lead to longer-range correlations between molecules.
+		\item Neighbor-list and electrostatics/LJ cutoff scheme and distance: check force field recommendations
+		\item Use Ewald methods to treat long-ranged electrostatics if possible
+		\begin{itemize}
+			\item Make sure to use the correct Ewald geometry to match the periodic boundary conditions
+		\end{itemize}
+	\end{itemize}
+	\item Long-ranged dispersion interactions and cutoffs
+	\begin{itemize}
+		\item In many MD packages, such corrections for long-range attractive interactions due to dispersion interactions are implemented assuming a bulk, homogeneous phase - these SHOULD NOT be used.  
+		An exception would be if the attractive energy density of the two phases is nearly identical, but this is not likely. 
+		Carefully read the implementation details of these corrections to assess their validity to your system.
+		\item Long-ranged dispersion corrections for an infinite system of atoms in the solid or liquid phase as a function of the distance to the interface may be derived (such as the integrated 9-3 potential for LJ systems). 
+		This is only appropriate, however, for systems in which there are no periodic boundary conditions in the direction normal to the simulated interface.
+		\item Use Ewald methods for long-range dispersion interactions if option is available
+		\begin{itemize}
+			\item Make sure to use the correct Ewald geometry to match the periodic boundary conditions
+		\end{itemize}
+	\end{itemize}
+	\item For information on specific systems, see "Equilibrating the system and selecting MD settings" section in supplements for:
+	\begin{itemize}
+		\item \hyperref[subsec:SAMEq]{Self-assembled monolayers (SAMs)}
+		\item \hyperref[subsec:MetEq]{Metallic interfaces}
+	\end{itemize}
+\end{itemize}
+
+
+\subsection{Properties to check (are you simulating what you want?)}
+\label{subsec:mainCheck}
+
+	The following is a list of properties that one should consider checking for any interfacial simulation. 
+Depending on what one is trying to understand from the simulation, not all bullet points in this list will be relevant. 
+However, most should be generally relevant for all interfacial systems and so each bullet point should be considered.
+\begin{itemize}
+	\item Is each phase and/or the overall system at the correct state point? (density, temperature, pressure, etc.)
+	\item Is the distribution of kinetic energies correct for each phase?
+	\item Are the phases moving relative to each other?
+	\item Is the force field implemented correctly?
+	\begin{itemize}
+		\item Correct density profile perpendicular to interface?
+		\begin{itemize}
+			\item It is advantageous to calculate density profile(s) normal to the interfaces. 
+			For solid-liquid interfaces, liquid molecules typically order near the interface, causing density oscillations, and one wants to use a simulation box that is sufficiently large that the liquid attains the bulk density sufficiently far away from the interface.
+			\item In density profile calculations, to avoid unnecessarily smearing statistics if the interface fluctuates, be sure to align the instantaneous and initial interfacial centers of mass for every frame used in the density averages.
+		\end{itemize}
+		\item Correct specific distribution functions between atoms and functional groups on the surface and atoms of the solvent? 
+		(If reported by the force field)
+		\item Correct interfacial tension? OK, but this is not trivial to calculate when solid interfaces are involved
+		\item Correct free energies and/or enthalpies of…
+		\begin{itemize}
+			\item Solvation (interfacial free energy)
+			\item Solvent/solute adsorption
+			\item These properties or more difficult to compute and may not be applicable depending on what you want to get out of the simulation. 
+			Before spending the time to do this, carefully consider if it is necessary, especially if all of the other checks above have matched with the properties reported in the force field development.
+		\end{itemize}
+	\end{itemize}
+	\item Are there finite size effects that are undesirable?
+	\begin{itemize}
+		\item Are you trying to simulate a confined system?
+		\item Does each phase exhibit “bulk” behavior far from the interface? (density, RDF, diffusivity?)
+		\item If there are ordered adsorbed layers, does the simulation size accommodate several unit cells? 
+		Are the simulation dimensions parallel to the interface set so that they do not introduce artificial domain walls because they do not accommodate an integer number of unit cells?
+		\item Is there a net dipole moment in the system?
+		\item Are molecules assuming an unexpected ordering due to long range electrostatics or other forces? 
+		(for instance, a net dipole moment)
+		\item In other words, do solvent molecules in “bulk” regions far from the interface show orientational preferences relative to the interface?
+	\end{itemize}
+	\item For information on specific systems, see the "Properties to check" section of supplements for:
+	\begin{itemize}
+		\item \hyperref[subsec:SAMCheck]{Self-assembled monolayers (SAMs)}
+		\item \hyperref[subsec:MetCheck]{Metallic interfaces}
+	\end{itemize}
+\end{itemize}
+
+\section{Supplement for self-assembled monolayers}
+\label{sec:SAM}
+
+\subsection{Force field/model selection}
+\label{subsec:SAMFF}
+\subsection{Preparing initial configurations}
+\label{subsec:SAMPrep}
+\subsection{Equilibrating the system and selecting MD settings}
+\label{subsec:SAMEq}
+\subsection{Properties to check (are you simulating what you want?)}
+\label{subsec:SAMCheck}
+
+Will fill all this in soon.
+
+
+\section{Supplement for metallic interfaces}
+\label{sec:Met}
+
+\subsection{Force field/model selection}
+\label{subsec:MetFF}
+\subsection{Preparing initial configurations}
+\label{subsec:MetPrep}
+\subsection{Equilibrating the system and selecting MD settings}
+\label{subsec:MetEq}
+\subsection{Properties to check (are you simulating what you want?)}
+\label{subsec:MetCheck}
+
+Will fill in soon.
+
+
+\section{Acknowledgments}
+
+Thanks to Dave Smith and Alan Grossfield for helpful comments and modifications.
+
+
+\nocite{*} % This command displays all refs in the bib file
+\bibliography{interfacial_simulation_setup}{}
+
+
+\end{document}
